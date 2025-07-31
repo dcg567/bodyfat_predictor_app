@@ -1,3 +1,16 @@
+# Ignore dataset CSVs
+data/
+*.csv
+
+# Ignore model files (if saving models later)
+models/
+*.pkl
+*.joblib
+
+# Ignore frontend build (if built separately)
+frontend/dist/
+frontend/node_modules/
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
