@@ -1,23 +1,23 @@
 import pandas as pd
-from sklearn.tree import DecisionTreeRegressor
+from sklearn.ensemble import RandomForestRegressor
 from sklearn.model_selection import train_test_split
 
+FEATURE_NAMES = ['Age', 'Weight', 'Height', 'Neck', 'Chest', 'Abdomen', 'Thigh', 'Ankle', 'Biceps', 'Forearm']
 
-FEATURE_NAMES = ['Age', 'Weight', 'Height', 'Neck', 'Chest', 'Abdomen','Hip', 'Thigh', 'Ankle', 'Biceps', 'Forearm', "Wrist"]
-
-def train_and_evaluate_decision_tree(csv_path):
+def train_random_forest(csv_path):
     dataset = pd.read_csv(csv_path)
     targets = dataset['BodyFat']
     features = dataset[FEATURE_NAMES]
 
     X_train, X_test, y_train, y_test = train_test_split(features, targets, test_size=0.2, random_state=42)
 
-    model = DecisionTreeRegressor(random_state=42)
+    model = RandomForestRegressor(random_state=42, n_estimators=100)
     model.fit(X_train, y_train)
 
     y_pred = model.predict(X_test)
     percentage_accuracies = 100 - abs((y_pred - y_test) / y_test) * 100
-    print("Average Percentage Accuracy:", percentage_accuracies.mean())
+    print("Random Forest Average Percentage Accuracy:", percentage_accuracies.mean())
+    
     return model
 
 def prepare_input(input_dict):
@@ -29,9 +29,10 @@ def predict_bodyfat(input_dict, model):
     prediction = model.predict(df)[0]
     return prediction
 
+
 if __name__ == "__main__":
-    csv_path = "data/bf_clean.csv"
-    model = train_and_evaluate_decision_tree(csv_path)
+    csv_path = "data/bf_clean.csv"  # update with your actual path
+    model = train_random_forest(csv_path)
 
     sample_input = {
         'Age': 25,
@@ -40,13 +41,11 @@ if __name__ == "__main__":
         'Neck': 15,
         'Chest': 40,
         'Abdomen': 35,
-        'Hip': 38,
         'Thigh': 22,
         'Ankle': 9,
         'Biceps': 13,
-        'Forearm': 11,
-        'Wrist': 7,
+        'Forearm': 11
     }
 
     prediction = predict_bodyfat(sample_input, model)
-    print("Predicted Body Fat:", prediction)
+    print("Predicted Body Fat (Random Forest):", prediction)

@@ -1,12 +1,21 @@
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import pandas as pd
-from sklearn.tree import DecisionTreeRegressor
-from sklearn.model_selection import train_test_split
+import joblib
+import os
 
 app = FastAPI()
 
-# --- Define expected input data model ---
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["http://localhost:3000"],  # React dev server URL
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# Input schema
 class BodyFatInput(BaseModel):
     Age: float
     Weight: float
@@ -19,36 +28,30 @@ class BodyFatInput(BaseModel):
     Biceps: float
     Forearm: float
 
-# --- Columns order used for training and prediction ---
-FEATURE_NAMES = ['Age', 'Weight', 'Height', 'Neck', 'Chest', 'Abdomen', 'Thigh', 'Ankle', 'Biceps', 'Forearm']
+# Feature order used during training
+FEATURE_NAMES = ['Age', 'Weight', 'Height', 'Neck', 'Chest',
+                 'Abdomen', 'Thigh', 'Ankle', 'Biceps', 'Forearm']
 
-# --- Train model on startup ---
-def train_and_evaluate_decision_tree(csv_path):
-    dataset = pd.read_csv(csv_path)
+#Load trained model at startup
+MODEL_PATH = "models/decision_tree_model.pkl"
 
-    targets = dataset['BodyFat']
-    features = dataset[FEATURE_NAMES]
+if not os.path.exists(MODEL_PATH):
+    raise RuntimeError(f"❌ Model not found at {MODEL_PATH}. Run train_model.py first.")
 
-    X_train, X_test, y_train, y_test = train_test_split(features, targets, test_size=0.2, random_state=42)
+model = joblib.load(MODEL_PATH)
+print("✅ Model loaded from", MODEL_PATH)
 
-    model = DecisionTreeRegressor(random_state=42)
-    model.fit(X_train, y_train)
-
-    y_pred = model.predict(X_test)
-    percentage_accuracies = 100 - abs((y_pred - y_test) / y_test) * 100
-    print("Average Percentage Accuracy:", percentage_accuracies.mean())
-
-    return model
-
-model = train_and_evaluate_decision_tree("data/bf_clean.csv")
-
-# --- Prepare input for prediction ---
+# Prepare input for prediction
 def prepare_input(input_obj: BodyFatInput):
     df = pd.DataFrame([input_obj.dict()])
-    df = df[FEATURE_NAMES]  # reorder columns exactly as during training
-    return df
+    return df[FEATURE_NAMES]
 
-# --- Prediction endpoint ---
+@app.get("/health")
+def health_check():
+    return {"status": "ok", "model_loaded": True}
+
+
+# Prediction endpoint
 @app.post("/predict")
 def predict_bodyfat(input_data: BodyFatInput):
     try:
