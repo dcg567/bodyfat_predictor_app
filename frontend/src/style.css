@@ -1,4 +1,4 @@
-/* === BASE === */
+
 body {
   margin: 0;
   font-family: 'Arial', sans-serif;
@@ -10,12 +10,12 @@ body {
   transition: background-color 0.3s ease;
 }
 
-/* === DARK MODE BODY === */
+/*DARK MODE BODY*/
 body.dark-mode {
   background: linear-gradient(to right, #0f172a, #1e293b); /* dark slate blend */
 }
 
-/* === FORM CONTAINER === */
+/*FORM CONTAINER*/
 .container {
   background: white;
   padding: 2rem;
@@ -106,7 +106,7 @@ p.error {
   margin-top: 1rem;
 }
 
-/* === TOGGLE BUTTON - FIXED ON SCREEN === */
+/*TOGGLE BUTTON*/
 .toggle-btn {
   position: fixed;
   top: 1.5rem;
@@ -124,7 +124,7 @@ body.dark-mode .toggle-btn {
   color: #f1f5f9;
 }
 
-/* === DARK MODE FOR FORM === */
+/*DARK MODE FORM*/
 body.dark-mode .container {
   background-color: #1e293b;
   color: #f1f5f9;
