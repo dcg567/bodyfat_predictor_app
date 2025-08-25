@@ -12,17 +12,17 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  function handleChange(e) {
+  const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
-  }
+  };
 
-  function toggleDarkMode() {
+  const toggleDarkMode = () => {
     setDarkMode(prev => !prev);
     document.body.classList.toggle("dark-mode", !darkMode);
-  }
+  };
 
-  async function handleSubmit(e) {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     setError(null);
@@ -42,41 +42,135 @@ export default function App() {
     } finally {
       setLoading(false);
     }
-  }
+  };
 
   return (
     <>
-      {/* Toggle Button OUTSIDE the container */}
       <button className="toggle-btn" onClick={toggleDarkMode}>
         {darkMode ? "🌞" : "🌙"}
       </button>
 
-      <div className="container">
-        <h1>Body Fat Predictor</h1>
+      <div className="app-flex-container">
+        {/* Left Section */}
+        <div className="left-container">
+          <div className="info-section">
+            <h2>How to Use</h2>
+            <p>Simply input your measurements into the fields and click 'predict'.</p>
+            <p>All measurements should be in centimeters, kilograms, and years.</p>
+            <p>This is an estimate, not a diagnosis.</p>
+          </div>
 
-        <form onSubmit={handleSubmit}>
-          {Object.entries(formData).map(([key, val]) => (
-            <div className="form-group" key={key}>
-              <label htmlFor={key}>{key}</label>
-              <input
-                id={key}
-                type="number"
-                name={key}
-                value={val}
-                onChange={handleChange}
-                required
-              />
+          <div className="info-section">
+            <h2>About the Model</h2>
+              <p>My dataset is sourced from Kaggle. It has been cleaned and modified to remove any 
+              outliers and ensure high-quality data for accurate predictions</p>
+              <p>My model uses a decision tree to predict body fat percentage based on measurements like age, weight, height, and several body circumferences. 
+              It learns from existing data by splitting features into different ranges 
+              and uses these rules to make accurate predictions on new inputs.</p>
+          </div>
+        </div>
+
+        {/* Middle Section (Form) */}
+        <div className="middle-container">
+          <h1>Body Fat Predictor</h1>
+
+          <form onSubmit={handleSubmit}>
+            {Object.entries(formData).map(([key, val]) => (
+              <div className="form-group" key={key}>
+                <label htmlFor={key}>{key}</label>
+                <input
+                  id={key}
+                  type="number"
+                  name={key}
+                  value={val}
+                  min="1"
+                  onChange={handleChange}
+                  required
+                />
+              </div>
+            ))}
+            <button type="submit" disabled={loading}>
+              {loading ? "Predicting..." : "Predict Body Fat"}
+            </button>
+          </form>
+
+          {error && <p className="error">{error}</p>}
+          {prediction !== null && !error && (
+            <p className="result">Predicted Body Fat: {prediction.toFixed(2)}%</p>
+          )}
+        </div>
+
+        {/* Right Section */}
+        <div className="right-container">
+          <div className="right-top">
+            <h3>Body Fat Percentage Chart</h3>
+            <table className="fat-table">
+              <thead>
+                <tr>
+                  <th>BF%</th>
+                  <th>Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+              <td>&lt;10%</td>
+              <td><span className="status-dot lean"></span>Extremely lean, pro athletes or bodybuilders</td>
+              </tr>
+              <tr>
+                <td>10–15%</td>
+                <td><span className="status-dot fit"></span>Fit and healthy, some muscle definition visible</td>
+              </tr>
+              <tr>
+                <td>15–20%</td>
+                <td><span className="status-dot average"></span>Average, healthy for most people</td>
+              </tr>
+              <tr>
+                <td>20–25%</td>
+                <td><span className="status-dot soft"></span>Soft appearance, approaching overweight</td>
+              </tr>
+              <tr>
+                <td>25%+</td>
+                <td><span className="status-dot obese"></span>Get yo ass to the gym</td>
+              </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div className="right-bottom">
+            <h3>Additional Info</h3>
+            <p>If you like this project and want to learn more or check out my other projects, check out my GitHub, website, or email me directly:</p>
+
+            <div className="link-buttons">
+              <a href="https://github.com/yourusername" target="_blank" rel="noopener noreferrer" className="link-btn">
+                <img src="https://cdn-icons-png.flaticon.com/512/25/25231.png" alt="GitHub" /> GitHub
+              </a>
+              <a href="https://yourwebsite.com" target="_blank" rel="noopener noreferrer" className="link-btn">
+                <img src="https://cdn-icons-png.flaticon.com/512/841/841364.png" alt="Website" /> Website
+              </a>
+              <a href="mailto:youremail@example.com" className="link-btn">
+                <img src="https://cdn-icons-png.flaticon.com/512/732/732200.png" alt="Email" /> Email Me
+              </a>
             </div>
-          ))}
-          <button type="submit" disabled={loading}>
-            {loading ? "Predicting..." : "Predict Body Fat"}
-          </button>
-        </form>
 
-        {error && <p className="error">{error}</p>}
-        {prediction !== null && !error && (
-          <p className="result">Predicted Body Fat: {prediction.toFixed(2)}%</p>
-        )}
+            <div className="extra-info">
+              <h4>Technologies Used:</h4>
+              <div className="tech-icons">
+                <div className="tech-item">
+                  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="React" />
+                  <span>React</span>
+                </div>
+                <div className="tech-item">
+                  <img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/fastapi/fastapi-original.svg" alt="FastAPI" />
+                  <span>FastAPI</span>
+                </div>
+                <div className="tech-item">
+                  <img src="/py.svg" alt="Python" />
+                  <span>Python</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </>
   );
