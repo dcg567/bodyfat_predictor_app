@@ -44,6 +44,15 @@ export default function App() {
     }
   };
 
+  const handleRefresh = () => {
+    setFormData({
+      Age: "", Weight: "", Height: "", Neck: "", Chest: "", Abdomen: "",
+      Thigh: "", Ankle: "", Biceps: "", Forearm: ""
+    });
+    setPrediction(null);
+    setError(null);
+  };
+
   return (
     <>
       <button className="toggle-btn" onClick={toggleDarkMode}>
@@ -62,11 +71,11 @@ export default function App() {
 
           <div className="info-section">
             <h2>About the Model</h2>
-              <p>My dataset is sourced from Kaggle. It has been cleaned and modified to remove any 
-              outliers and ensure high-quality data for accurate predictions</p>
-              <p>My model uses a decision tree to predict body fat percentage based on measurements like age, weight, height, and several body circumferences. 
-              It learns from existing data by splitting features into different ranges 
-              and uses these rules to make accurate predictions on new inputs.</p>
+            <p>My dataset is sourced from Kaggle. It has been cleaned and modified to remove any 
+            outliers and ensure high-quality data for accurate predictions</p>
+            <p>My model uses a decision tree to predict body fat percentage based on measurements like age, weight, height, and several body circumferences. 
+            It learns from existing data by splitting features into different ranges 
+            and uses these rules to make accurate predictions on new inputs.</p>
           </div>
         </div>
 
@@ -96,7 +105,10 @@ export default function App() {
 
           {error && <p className="error">{error}</p>}
           {prediction !== null && !error && (
-            <p className="result">Predicted Body Fat: {prediction.toFixed(2)}%</p>
+            <div className="result-container">
+              <p className="result">Predicted Body Fat: {prediction.toFixed(2)}%</p>
+              <button className="refresh-btn" onClick={handleRefresh}>Refresh</button>
+            </div>
           )}
         </div>
 
@@ -113,25 +125,25 @@ export default function App() {
               </thead>
               <tbody>
                 <tr>
-              <td>&lt;10%</td>
-              <td><span className="status-dot lean"></span>Extremely lean, pro athletes or bodybuilders</td>
-              </tr>
-              <tr>
-                <td>10–15%</td>
-                <td><span className="status-dot fit"></span>Fit and healthy, some muscle definition visible</td>
-              </tr>
-              <tr>
-                <td>15–20%</td>
-                <td><span className="status-dot average"></span>Average, healthy for most people</td>
-              </tr>
-              <tr>
-                <td>20–25%</td>
-                <td><span className="status-dot soft"></span>Soft appearance, approaching overweight</td>
-              </tr>
-              <tr>
-                <td>25%+</td>
-                <td><span className="status-dot obese"></span>Get yo ass to the gym</td>
-              </tr>
+                  <td>&lt;10%</td>
+                  <td><span className="status-dot lean"></span>Extremely lean, pro athletes or bodybuilders</td>
+                </tr>
+                <tr>
+                  <td>10–15%</td>
+                  <td><span className="status-dot fit"></span>Fit and healthy, some muscle definition visible</td>
+                </tr>
+                <tr>
+                  <td>15–20%</td>
+                  <td><span className="status-dot average"></span>Average, healthy for most people</td>
+                </tr>
+                <tr>
+                  <td>20–25%</td>
+                  <td><span className="status-dot soft"></span>Soft appearance, approaching overweight</td>
+                </tr>
+                <tr>
+                  <td>25%+</td>
+                  <td><span className="status-dot obese"></span>Get yo ass to the gym</td>
+                </tr>
               </tbody>
             </table>
           </div>
